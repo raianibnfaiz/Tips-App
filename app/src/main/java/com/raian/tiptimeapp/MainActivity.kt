@@ -3,34 +3,65 @@ package com.raian.tiptimeapp
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.Switch
-import android.widget.TextView
+import android.util.Log
+import com.raian.tiptimeapp.databinding.ActivityMainBinding
+import java.text.NumberFormat
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var calculateButton: Button
-    private lateinit var costOfService: EditText
-    private lateinit var nameTextView: TextView
-    private lateinit var costTextView: TextView
-    private lateinit var check: Switch
-    private lateinit var costServiceOption : CheckBox
+    private lateinit var binding: ActivityMainBinding
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        nameTextView = findViewById(R.id.textView3)
-        costTextView = findViewById(R.id.textView5)
-        calculateButton = findViewById(R.id.calculate_button)
-        costOfService= findViewById((R.id.cost_of_service))
-        check = findViewById(R.id.round_up_switch)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        calculateButton.setOnClickListener {
-            val name =  costOfService.text.toString()
-            nameTextView.text = check.isChecked.toString()
-            costTextView.text = "$name"
-            costOfService.setText("")
+        binding.calculateButton.setOnClickListener {
+            var amount = calculateTip()
+            Log.d("MainActivity", amount.toString())
         }
     }
+//    private fun calculateTip(){
+//        val stringTextField = binding.costOfService.text.toString()
+//        val cost = stringTextField.toDoubleOrNull()
+//        if(cost == null){
+//            binding.tipResult.text = ""
+//            return
+//        }
+//        //binding.tipResult.text = cost.toString()
+//        val tipPercentage = when(binding.tipOptions.checkedRadioButtonId){
+//            R.id.optionTwentyPercent -> 0.20
+//            R.id.optionEighteenPercent -> 0.18
+//            else -> 0.15
+//        }
+//        var tip = tipPercentage * cost
+//        binding.tipResult.text = tip.toString()
+//    }
+
+//    @SuppressLint("StringFormatInvalid")
+    private fun calculateTip() {
+        val stringInTextField = binding.costOfService.text.toString()
+        val cost = stringInTextField.toDouble()
+        Log.d("MainActivity", cost.toString())
+        if (cost == null) {
+            binding.tipResult.text = ""
+            return
+        }
+
+        val tipPercentage = when (binding.tipOptions.checkedRadioButtonId) {
+            R.id.optionTwentyPercent -> 0.20
+            R.id.optionEighteenPercent -> 0.18
+            else -> 0.15
+        }
+
+        var tip = tipPercentage * cost
+        if (binding.roundUpSwitch.isChecked) {
+            tip = kotlin.math.ceil(tip)
+        }
+
+        val formattedTip = NumberFormat.getCurrencyInstance().format(tip)
+        binding.tipResult.text = formattedTip
+    }
+
+
 }

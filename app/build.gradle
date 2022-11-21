@@ -6,7 +6,9 @@ plugins {
 android {
     namespace 'com.raian.tiptimeapp'
     compileSdk 32
-
+    buildFeatures {
+        viewBinding = true
+    }
     defaultConfig {
         applicationId "com.raian.tiptimeapp"
         minSdk 19
